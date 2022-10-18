@@ -1,15 +1,15 @@
 from __future__ import annotations
 import random
 from typing import Counter, List, Optional
-from noble_tile import NobleTile
-from development_card import DevelopmentCard
-from resource import Resources
+from ..noble_tile import NobleTile
+from ..development_card import DevelopmentCard
+from ..resource import Resources
+from ..player import Player, Turn
 from typing import TYPE_CHECKING
-from player import Player
+
 
 if TYPE_CHECKING:
     from board import Board
-
 
 class RandomPlayer(Player):
     def __init__(self, name: str) -> None:
@@ -82,29 +82,33 @@ class RandomPlayer(Player):
             return card
         return None
 
-    def make_turn(self, board: Board) -> bool:
+    def make_turn(self, board: Board) -> Turn:
         card = self.needs_to_buy_card(board)
         if card:
+            if card in board.opened_development_cards[1] or board.opened_development_cards[2] or board.opened_development_cards[3]:
+                result = Turn.BUY_BOARD_CARD
+            else:
+                result = Turn.BUY_HAND_CARD
             self.buy_development_card(board, card)
-            return True
+            return result
         
         stuck = set()
         while True:
-            if list(stuck) == [1, 2, 3]:
-                return False
+            if len(stuck) == 3:
+                return Turn.FAILED
             random_turn = random.randint(1, 3)
             if random_turn == 1:
                 resources = self.needs_take_three_resources(board)
                 if resources:
                     self.take_three_resources(resources, board)
-                    return True
+                    return Turn.THREE_CARDS
                 stuck.add(1)
                 
             elif random_turn == 2:
                 resources = self.needs_take_two_resources(board)
                 if resources:
                     self.take_two_resources(resources, board)
-                    return True
+                    return Turn.TWO_CARDS
                 stuck.add(2)
             elif random_turn == 3:
                 if self.needs_take_gold_and_card(board):
@@ -119,5 +123,5 @@ class RandomPlayer(Player):
                             card_level = ((card_level + 1) % 3) + 1
                         found_level = True
                     self.take_gold_and_card(board, card_level)
-                    return True
+                    return Turn.GOLD_AND_CARD
                 stuck.add(3)

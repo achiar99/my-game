@@ -1,5 +1,5 @@
 from collections import Counter
-from resource import Resources
+from .resource import Resources
 
 class DevelopmentCard:
     def __init__(self, score: int, gift: Resources, cost: Counter, level: int) -> None:

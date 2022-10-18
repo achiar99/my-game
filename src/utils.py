@@ -1,9 +1,9 @@
 from collections import Counter
 from typing import List
 
-from noble_tile import NobleTile
-from development_card import DevelopmentCard
-from resource import Resources
+from .noble_tile import NobleTile
+from .development_card import DevelopmentCard
+from .resource import Resources
 
 
 def get_all_first_level_development_cards() -> List[DevelopmentCard]:

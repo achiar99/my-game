@@ -1,11 +1,11 @@
 from collections import Counter
 from copy import deepcopy
 from typing import Dict, List
-from development_card import DevelopmentCard
-from noble_tile import NobleTile
-from player import Player
-from resource import Resources
-from utils import get_all_noble_tiles, get_all_first_level_development_cards, \
+from .development_card import DevelopmentCard
+from .noble_tile import NobleTile
+from .player import Player
+from .resource import Resources
+from .utils import get_all_noble_tiles, get_all_first_level_development_cards, \
                   get_all_second_level_development_cards, get_all_third_level_development_cards
 from random import shuffle
 
@@ -84,3 +84,7 @@ class Board:
     def get_winner(self) -> Player:
         results = self.get_players_results()
         return results[0]
+    
+    def __str__(self) -> str:
+        result = str(self.resources)
+        return result

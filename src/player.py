@@ -1,13 +1,23 @@
 from __future__ import annotations
 import random
-from typing import Counter, Dict, List, Optional
-from noble_tile import NobleTile
-from development_card import DevelopmentCard
-from resource import Resources
+from typing import Counter, Dict, List
+from .noble_tile import NobleTile
+from .development_card import DevelopmentCard
+from .resource import Resources
 from typing import TYPE_CHECKING
+from enum import Enum
 
 if TYPE_CHECKING:
     from board import Board
+
+
+class Turn(Enum):
+    FAILED = 1
+    THREE_CARDS = 2
+    TWO_CARDS = 3
+    GOLD_AND_CARD = 4
+    BUY_HAND_CARD = 5
+    BUY_BOARD_CARD = 6
 
 
 class Player:
@@ -56,7 +66,7 @@ class Player:
             discount[card.gift] += 1
         return discount
 
-    def buy_development_card(self, board: Board, development_card: DevelopmentCard) -> None:
+    def buy_development_card(self, board: Board, development_card: DevelopmentCard) -> Turn:
         discount = self.get_discount()
         missing = 0
         for resource, amount in development_card.cost.items():

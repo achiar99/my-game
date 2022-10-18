@@ -1,13 +1,7 @@
-from .board import Board
-from .players.random_player import RandomPlayer
-from .player import Turn
+from src.board import Board
+from src.players.random_player import RandomPlayer
+from src.player import Turn
 
-
-def get_turn_report(board, player):
-    player_resource = ''
-    for resource, count in player.resources.items():
-        player_resource += f'{resource.value}: {count} '
-    return f'{player.name} - cards: {len(player.development_cards)}. points: {player.points}. resources: {player_resource}'
 
 def play_game():
     player_achia = RandomPlayer('achia')
@@ -20,22 +14,20 @@ def play_game():
         result = board.players[current_player_index].make_turn(board)
         if result == Turn.FAILED:
             return 'stuck'
+        
         board.players[current_player_index].take_noble_tiles(board)
         if board.is_final_round() and current_player_index == len(board.players) - 1:
             return board.get_winner().name
-        # print(get_turn_report(board, board.players[current_player_index]))
         current_player_index = (current_player_index + 1) % len(board.players)
-    # print(f'{player_achia.name}: {player_achia.points}')
-    # print(f'{player_avigail.name}: {player_avigail.points}')    
 
-def main():
+
+def test_rules():
     stuck = 0
     achia = 0
     avigail = 0
     tusha = 0
     itay = 0
     for index in range(1000):
-        print(index)
         result = play_game()
         if result == 'stuck':
             stuck += 1
@@ -47,8 +39,3 @@ def main():
             tusha += 1
         if result == 'itay':
             itay += 1
-    print(f'stuck: {stuck}, achia: {achia}, avigail: {avigail}, tusha: {tusha}, itay: {itay}')
-    
-
-if __name__ == "__main__":
-    main()
