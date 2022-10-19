@@ -6,9 +6,9 @@ from src.player import Turn
 def play_game():
     player_achia = RandomPlayer('achia')
     player_avigail = RandomPlayer('avigail')
-    player_tusha = RandomPlayer('tusha')
-    player_itay = RandomPlayer('itay')
-    board = Board([player_achia, player_avigail, player_tusha, player_itay])
+    # player_tusha = RandomPlayer('tusha')
+    # player_itay = RandomPlayer('itay')
+    board = Board([player_achia, player_avigail])
     current_player_index = 0
     while(True):
         result = board.players[current_player_index].make_turn(board)

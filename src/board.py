@@ -19,7 +19,7 @@ class Board:
         self.players: List[Player] = players
         self.closed_development_cards: Dict[int, List[DevelopmentCard]] = self.get_all_development_cards()
         self.opened_development_cards: Dict[int, List[DevelopmentCard]] = {}
-        self.noble_tiles: List[NobleTile] = []
+        self.noble_tiles: List[NobleTile] = self.get_initial_noble_tiles()
         self.resources: Counter = self.get_initial_resources()
         self.init_opened_cards()
 
@@ -86,5 +86,10 @@ class Board:
         return results[0]
     
     def __str__(self) -> str:
-        result = str(self.resources)
+        players = ''
+        for player in self.players:
+            players += f'\n\n{str(player)}'
+        resources = f'yellow: {self.resources[Resources.GOLD]}, red: {self.resources[Resources.RUBY]}, blue: {self.resources[Resources.SAPPHIRE]}, green: {self.resources[Resources.EMERALD]}, white: {self.resources[Resources.DIAMOND]}, black: {self.resources[Resources.ONYX]}'
+        result = f'resources: {resources}\n\n' \
+                  f'players: {players}'
         return result

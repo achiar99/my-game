@@ -42,11 +42,11 @@ class Player:
         discount = self.get_discount()
         noble_tiles_to_take = []
         for noble_tile in borad.noble_tiles:
-            if noble_tile.score[Resources.DIAMOND] <= discount[Resources.DIAMOND] and \
-               noble_tile.score[Resources.EMERALD] <= discount[Resources.EMERALD] and \
-               noble_tile.score[Resources.ONYX] <= discount[Resources.ONYX] and \
-               noble_tile.score[Resources.RUBY] <= discount[Resources.RUBY] and \
-               noble_tile.score[Resources.SAPPHIRE] <= discount[Resources.SAPPHIRE]:
+            if noble_tile.cost[Resources.DIAMOND] <= discount[Resources.DIAMOND] and \
+               noble_tile.cost[Resources.EMERALD] <= discount[Resources.EMERALD] and \
+               noble_tile.cost[Resources.ONYX] <= discount[Resources.ONYX] and \
+               noble_tile.cost[Resources.RUBY] <= discount[Resources.RUBY] and \
+               noble_tile.cost[Resources.SAPPHIRE] <= discount[Resources.SAPPHIRE]:
                 noble_tiles_to_take.append(noble_tile)
         
         for noble_tile in noble_tiles_to_take:
@@ -136,7 +136,7 @@ class Player:
                 board.closed_development_cards[card.level] = board.closed_development_cards[card.level][1:]
                 board.opened_development_cards[card.level].remove(card)
                 board.opened_development_cards[card.level].append(new_card)
-                
+
         elif card_level:
             if len(board.closed_development_cards[card_level]) > 0:
                 card = board.closed_development_cards[card_level][0]
@@ -160,3 +160,48 @@ class Player:
 
         self.resources[Resources.GOLD] += 1
         board.resources[Resources.GOLD] -= 1
+
+    def __str__(self) -> str:
+        resources = f'yellow: {self.resources[Resources.GOLD]}, red: {self.resources[Resources.RUBY]}, blue: {self.resources[Resources.SAPPHIRE]}, green: {self.resources[Resources.EMERALD]}, white: {self.resources[Resources.DIAMOND]}, black: {self.resources[Resources.ONYX]}'
+        cards_in_hand = ''
+        for card_in_hand in self.development_cards_in_hand:
+            cards_in_hand += f'{str(card_in_hand)}\n'
+        cards = ''
+        for card in self.development_cards:
+            cards += f'{str(card)}\n'
+        return f'name: {self.name}\npoints: {self.points}\ncards in hand: {cards_in_hand}\ncards: {cards}\nresources: {resources}\nnoble tiles: {self.noble_tiles}'
+
+    def random_turn(self, board) -> Turn:
+        stuck = set()
+        while True:
+            if len(stuck) == 3:
+                return Turn.FAILED
+            random_turn = random.randint(1, 3)
+            if random_turn == 1:
+                resources = self.needs_take_three_resources(board)
+                if resources:
+                    self.take_three_resources(resources, board)
+                    return Turn.THREE_CARDS
+                stuck.add(1)
+                
+            elif random_turn == 2:
+                resources = self.needs_take_two_resources(board)
+                if resources:
+                    self.take_two_resources(resources, board)
+                    return Turn.TWO_CARDS
+                stuck.add(2)
+            elif random_turn == 3:
+                if self.needs_take_gold_and_card(board):
+                    card_level = 1
+                    if self.points >= 4 and self.points <= 7:
+                        card_level = 2
+                    if self.points > 7:
+                        card_level = 3
+                    found_level = False
+                    while not found_level:
+                        if len(board.closed_development_cards[card_level]) == 0:
+                            card_level = ((card_level + 1) % 3) + 1
+                        found_level = True
+                    self.take_gold_and_card(board, card_level)
+                    return Turn.GOLD_AND_CARD
+                stuck.add(3)

@@ -538,3 +538,4 @@ def get_all_noble_tiles():
                                                Resources.ONYX: 3,
                                                Resources.RUBY: 3,
                                                Resources.SAPPHIRE: 0})))
+    return noble_tiles

@@ -1,5 +1,6 @@
 from .board import Board
 from .players.random_player import RandomPlayer
+from .players.player_level_1 import PlayerLevel1
 from .player import Turn
 
 
@@ -10,16 +11,17 @@ def get_turn_report(board, player):
     return f'{player.name} - cards: {len(player.development_cards)}. points: {player.points}. resources: {player_resource}'
 
 def play_game():
-    player_achia = RandomPlayer('achia')
+    player_achia = PlayerLevel1('achia')
     player_avigail = RandomPlayer('avigail')
-    player_tusha = RandomPlayer('tusha')
-    player_itay = RandomPlayer('itay')
-    board = Board([player_achia, player_avigail, player_tusha, player_itay])
+
+    board = Board([player_achia, player_avigail])
     current_player_index = 0
     while(True):
         result = board.players[current_player_index].make_turn(board)
         if result == Turn.FAILED:
             return 'stuck'
+        # print(f'\n-----\n{str(board)}')
+        # print(f'\n{result}')
         board.players[current_player_index].take_noble_tiles(board)
         if board.is_final_round() and current_player_index == len(board.players) - 1:
             return board.get_winner().name
